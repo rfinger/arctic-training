@@ -2,7 +2,7 @@
 Test project for GIT during the Arctic Data Center training.
 
 * Data
-* Lessons
+* Lessons and scripts
 * Figures: Rebecca changed this.
 * Notes
 
