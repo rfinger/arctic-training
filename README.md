@@ -3,6 +3,7 @@ Test project for GIT during the Arctic Data Center training.
 
 * Data
 * Lessons
+* Figures: Rebecca changed this.
 * Notes
 
 Let's make some more changes in RStudio.
