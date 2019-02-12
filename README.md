@@ -4,3 +4,16 @@ Test project for GIT during the Arctic Data Center training.
 * Data
 * Lessons
 * Notes
+
+Let's make some more changes in RStudio.
+
+And a few more changes.
+
+Change1.
+
+Change 2. 
+
+Make another change to the readme.
+
+sajkdhfkasj
+
