@@ -9,11 +9,10 @@ Let's make some more changes in RStudio.
 
 And a few more changes.
 
-Change1.
+Change 1.
 
 Change 2. 
 
 Make another change to the readme.
 
-sajkdhfkasj
 
