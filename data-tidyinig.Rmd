@@ -69,7 +69,8 @@ catch_clean <- catch_long %>%
   rename(catch_thousands = Catch) %>% 
   mutate(catch_thousands = ifelse(catch_thousands=="I", 1, catch_thousands)) %>% 
   mutate(catch_thousands = as.numeric(catch_thousands)) %>% 
-  mutate(catch = catch_thousands * 1000)
+  mutate(catch = catch_thousands * 1000) %>% 
+  select(-catch_thousands)
 
 head(catch_clean)
 ```
