@@ -100,4 +100,45 @@ head(species_mean)
 
 #Join the Region Definitions
 
+Read in the regions dataframe.
+```{r}
+region_defs <- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.303.1",
+                            method = "libcurl"),
+                        stringsAsFactors = FALSE) %>% 
+    select(code, mgmtArea)
+
+head(region_defs)
+```
+Now we can start with the actual join.
+```{r}
+catch_joined<- left_join(catch_clean, region_defs, by = c("Region" = "code"))
+head(catch_joined)
+```
+
 #Misc. Functions
+* Seperate
+* Unite
+
+We are first going to explore seperate with some dumby variables which have been created for this workshop. 
+
+```{r}
+dates_df <- data.frame(date = c("5/24/1930",
+                                "5/25/1930",
+                                "5/26/1930",
+                                "5/27/1930",
+                                "5/28/1930"),
+                       stringsAsFactors = FALSE)
+
+dates_split<- dates_df %>% 
+  separate(date, into = c("month", "day", "year"), sep = "/", remove = F)#keeps the original column
+
+head(dates_split)
+```
+
+```{r}
+dates_unite<- dates_split %>% 
+  unite(col=date_iso, year,month, day, sep= "-")
+
+head(dates_unite)
+```
+
