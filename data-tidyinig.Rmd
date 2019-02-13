@@ -1,0 +1,27 @@
+---
+title: "Data Reformatting"
+author: "RFH"
+date: "February 13, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+
+```{r, warning = FALSE, message=FALSE}
+library(tidyverse)
+
+# to call stats filter - stats::filter()
+```
+
+#Reformat Catch Data
+* Remove the "all" column
+* Gather the different species into one "Species" column
+    - move from wide to long
+* General QA
+
+#Join the Region Definitions
+
+#Misc. Functions
