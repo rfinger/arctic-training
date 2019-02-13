@@ -22,6 +22,43 @@ library(tidyverse)
     - move from wide to long
 * General QA
 
+It is possible to directly read in .csv files from a data repository by entering in the url link address. 
+
+[Mike Byerly. Alaska commercial salmon catches by management region (1886- 1997). Gulf of Alaska Data Portal. df35b.304.2.](https://knb.ecoinformatics.org/view/df35b.304.2)
+
+```{r}
+catch_original<- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/df35b.302.1", method= "libcurl"), stringsAsFactors = FALSE)
+
+head(catch_original)
+```
+
+Remove the "all" and "notesRegCode" columns using 'select' and piping to improve readability in the workflow.
+
+Cnt + shift + m : pipe operator shortcup %>% 
+
+When using gather, the key is the name of the new column created by condensing the long format columns.
+
+```{r}
+catch_long<-catch_original %>%
+  select(Region, Year, Chinook, Sockeye, Coho, Pink, Chum) %>% 
+  gather(key="Species", value = "Catch", -Region, -Year) #move from wide to long
+
+#Another options is to deselect
+catch_long_also<-catch_original %>%
+  select(-All, -notesRegCode)
+
+head(catch_long)
+
+```
+Just as an exercise, we can also reverse what we just did through 'spread'
+```{r}
+catch_wide <- catch_long %>% 
+  spread(key=Species, value = Catch)
+
+head(catch_wide)
+```
+
+
 #Join the Region Definitions
 
 #Misc. Functions
