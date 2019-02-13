@@ -58,6 +58,29 @@ catch_wide <- catch_long %>%
 head(catch_wide)
 ```
 
+## Clean up our data
+* Rename catch to catch_thousands
+* Change catch column to be numeric
+* Create a new catch column in units num. of fish `#`
+
+To make life easier, it is best to seperate out the pipe segments into different steps.
+```{r}
+catch_clean <- catch_long %>%
+  rename(catch_thousands = Catch) %>% 
+  mutate(catch_thousands = ifelse(catch_thousands=="I", 1, catch_thousands)) %>% 
+  mutate(catch_thousands = as.numeric(catch_thousands)) %>% 
+  mutate(catch = catch_thousands * 1000)
+
+head(catch_clean)
+```
+
+Look for where as.numeric failed.
+```{r}
+test<- as.numeric(catch_long$Catch)
+i<- which(is.na(test) ==TRUE)
+catch_long[i,]
+
+```
 
 #Join the Region Definitions
 
