@@ -74,13 +74,28 @@ catch_clean <- catch_long %>%
 
 head(catch_clean)
 ```
-
-Look for where as.numeric failed.
-```{r}
+We also looked for where as.numeric failed but do not need to show the code.
+```{r, eval=F, echo=F}
 test<- as.numeric(catch_long$Catch)
 i<- which(is.na(test) ==TRUE)
 catch_long[i,]
 
+```
+
+## Split-Apply-Combine Strategy
+
+* Calculate the mean catch by species
+
+```{r}
+species_mean<- catch_clean %>% 
+  group_by(Species, Year) %>% #split
+  summarise(catch_mean = mean(catch),#apply and combine
+            num_obs=n(),
+            se= (sd(catch))/sqrt(n())) %>% #add a data column
+  arrange(-catch_mean) %>% #sorts data by decending order
+  filter(Year>= 1990) #add in a filter component if we just want a subset of data.
+  
+head(species_mean)
 ```
 
 #Join the Region Definitions
