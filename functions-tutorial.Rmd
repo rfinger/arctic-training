@@ -15,6 +15,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - Convert to C
 
 ```{r}
+s
 airtemps <- c(212, 30.3, 78, 32, 0, -56)
 
 test<-(airtemps-32)*5/9
@@ -70,5 +71,8 @@ fahr_to_celsius<- function(fahr) {
   celsius <- (fahr -32)* 5/9
   return(celsius) #return allows for a particularly value to be sent back
 }
+
+source("convet.R")# this uses a function from another script
+new_fahr_to_celsius(airtemps)
 ```
 

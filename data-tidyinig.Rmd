@@ -142,3 +142,11 @@ dates_unite<- dates_split %>%
 head(dates_unite)
 ```
 
+```{r}
+library(stringr)
+
+month<- c("5", "05", "03")
+
+str_pad(month, 2, side = "left", pad= "0") # this makes the one digit month a second digit
+```
+
