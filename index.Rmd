@@ -12,6 +12,8 @@ knitr::opts_chunk$set(echo = TRUE)
 ```{r, warning = FALSE, message=FALSE}
 library(tidyverse)
 library(scales)
+library(leaflet)
+library(DT)
 ```
 
 # Reformat the data for plotting
@@ -74,5 +76,29 @@ ggsave("Figures/regional_escapement.png",
        height = 8,
        units = "in")
 
+```
+
+# Generate an interactive map
+
+* Map the sampling locations for escapement
+* Find distinct lat/long/location combinations
+
+```{r}
+locations<- esc %>% 
+  distinct(Location, Latitude, Longitude) %>% 
+  drop_na()
+
+head(locations)
+```
+```{r,echo=F}
+datatable(locations)
+```
+
+Now it is time to make a map!
+
+```{r}
+leaflet(locations) %>% 
+  addTiles() %>% 
+  addMarkers(lng=~Longitude, lat = ~Latitude, popup = ~Location)
 ```
 
