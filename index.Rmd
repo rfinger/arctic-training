@@ -11,6 +11,7 @@ knitr::opts_chunk$set(echo = TRUE)
 
 ```{r, warning = FALSE, message=FALSE}
 library(tidyverse)
+library(scales)
 ```
 
 # Reformat the data for plotting
@@ -50,9 +51,28 @@ ggplot(annual_esc, mapping=aes(x=Species, y= Count, fill=SASAP.Region))+
 ggplot(filter(annual_esc, SASAP.Region =="Kodiak"), aes(x=Year, y=Count, color=Species))+
   geom_line()+
   geom_point()+
+  scale_y_continuous(labels=comma)+
   ylab("Escapement (num of fish)")+
   xlab("Year")+
   ggtitle("Kodiak Salmon Escapement")+
   theme_test()
+```
+
+```{r}
+p<-ggplot(annual_esc, aes(x=Year, y=Count, color=Species))+
+  geom_line()+
+  geom_point()+
+  scale_y_continuous(label=comma)+
+  facet_wrap(~SASAP.Region, scales = "free_y")+
+  theme_test()
+
+p
+
+ggsave("Figures/regional_escapement.png", 
+       plot=p,
+       width= 7,
+       height = 8,
+       units = "in")
+
 ```
 
