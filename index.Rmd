@@ -27,7 +27,7 @@ esc<- read.csv(url("https://knb.ecoinformatics.org/knb/d1/mn/v2/object/urn%3Auui
 * Calculate annual escapment by species and region
 * Filter for just pacific salmon species (Sockeye, Chinook, Coho, Pink, Chum)
 
-```{r}
+```{r, echo=FALSE}
 annual_esc<-esc %>% 
   separate(sampleDate, into = c("Year", "Month", "Day"), sep = "-", remove = F) %>% 
   mutate(Year=as.numeric(Year)) %>% #coerce year to numeric typ
@@ -42,12 +42,12 @@ head(annual_esc)
 
 # Generate some static plots
 
-```{r}
+```{r, echo=FALSE}
 ggplot(annual_esc, mapping=aes(x=Species, y= Count, fill=SASAP.Region))+
   geom_col()
 ```
 
-```{r}
+```{r, echo=FALSE}
 ggplot(filter(annual_esc, SASAP.Region =="Kodiak"), aes(x=Year, y=Count, color=Species))+
   geom_line()+
   geom_point()+
@@ -58,7 +58,7 @@ ggplot(filter(annual_esc, SASAP.Region =="Kodiak"), aes(x=Year, y=Count, color=S
   theme_test()
 ```
 
-```{r}
+```{r, echo=FALSE}
 p<-ggplot(annual_esc, aes(x=Year, y=Count, color=Species))+
   geom_line()+
   geom_point()+
