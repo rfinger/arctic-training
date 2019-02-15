@@ -1,0 +1,149 @@
+---
+title: "sf-package-training"
+author: "RFH"
+date: "February 15, 2019"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r libraries}
+library(sf)
+library(tidyverse)
+library(leaflet)
+library(scales)
+```
+
+```{r}
+ak_shp_sf<-read_sf("shapefiles/ak_regions_simp.shp")
+```
+
+Note: the sf package allows you to work with shapefiles as if they were dataframes, similar to an attribute table in ArcMap.
+
+```{r}
+plot(ak_shp_sf)
+```
+
+That looks like a weird projection. We can check this through different calls in the sf package.
+
+```{r}
+st_crs(ak_shp_sf) ##check projection and coordinate system
+
+ak_shp_sf<-ak_shp_sf %>% 
+  st_transform(crs = 3338)
+```
+
+#Spatial Joins!
+```{r}
+pop <- read.csv("shapefiles/alaska_population.csv")
+```
+
+Now we need to convert the .csv into an actual shapefile
+
+```{r}
+pop_sf<- st_as_sf(pop, 
+                  coords = c("lng", "lat"),
+                  crs=4326,
+                  remove=F) %>% ##this retains the lat long columns
+  st_transform(crs=3338)
+```
+
+st_join has options for how you would like to join shapefiles.
+
+```{r}
+pop_joined_sf<- st_join(pop_sf, ak_shp_sf, join=st_within)
+
+plot(pop_joined_sf["region"])#this stops it from giving plots for every column
+```
+
+## Group by and summerize
+
+```{r}
+pop_region<-pop_joined_sf %>% 
+  as.data.frame() %>% #drops geometry column
+  group_by(region) %>% 
+  summarize(total_pop = sum(population))
+
+head(pop_region)
+  
+```
+
+```{r}
+ak_pop_sf <- left_join(ak_shp_sf, pop_region)
+
+plot(ak_pop_sf["total_pop"])
+```
+
+Learning how to group by different categories
+
+```{r}
+ak_mgmt<- ak_pop_sf %>% 
+  group_by(mgmt_area) %>% # here we do want to aggregate over geometries
+  summarize(total_pop = sum(total_pop), do_union=F)
+
+plot(ak_mgmt["total_pop"])
+```
+
+
+Write out shapefiles to working directory
+
+```{r}
+write_sf(ak_shp_sf, "shapefiles/ak_regions_populations.shp")
+```
+
+# Create static plots
+```{r}
+ggplot(ak_pop_sf)+
+  geom_sf(data=ak_pop_sf, aes(fill=total_pop))+#put the aes in the geom_sf to help with layering
+  geom_sf(data=pop_sf, size=0.5)+
+  theme_bw()+
+  labs(fill = "Total Population")+
+  scale_fill_continuous(low= "khaki", high="firebrick", labels= comma)
+```
+## Interactive maps
+
+Important note: you need to unproject your data and then tell leaflet how to project it.
+
+The first step is to give leaflet a projection object that makes sense.
+
+```{r leaflet functions}
+epsg3338 <- leaflet::leafletCRS(
+  crsClass = "L.Proj.CRS",
+  code = "EPSG:3338",
+  proj4def =  "+proj=aea +lat_1=55 +lat_2=65 +lat_0=50 +lon_0=-154 +x_0=0 +y_0=0 +ellps=GRS80 +towgs84=0,0,0,0,0,0,0 +units=m +no_defs",
+  resolutions = 2^(16:7))
+
+```
+
+```{r transform to remove projection}
+ak_crs<- st_transform(ak_pop_sf, crs= 4326) #unprojected data with WGS84 datum
+
+pop_crs<-st_transform(pop_sf, crs=4326)
+```
+
+```{r}
+pal<- colorNumeric(palette = "Reds", domain= ak_crs$total_pop)
+
+m<- leaflet(options = leafletOptions(crs=epsg3338)) %>% 
+  addPolygons(data=ak_crs, 
+              fillColor = ~pal(total_pop),
+              weight=1,
+              color="black",
+              label=~region,
+              fillOpacity = 1) %>% 
+  addCircleMarkers(data= pop_crs,
+                   lat=~lat,
+                   lng=~lng,
+                   radius = 2,
+                   fillColor = "gray",
+                   fillOpacity = 1,
+                   weight = 0.25,
+                   color="black",
+                   label=~city)
+
+m
+
+```
+
